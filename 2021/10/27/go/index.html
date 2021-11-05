@@ -1,0 +1,337 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="the tianxia"><meta name="copyright" content="the tianxia"><meta name="generator" content="Hexo 5.4.0"><meta name="theme" content="hexo-theme-yun"><title>go语言 | thetianxia-天下的小窝</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.25/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+}
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"example.com","root":"/","title":"天下的小窝","version":"1.6.2","mode":"time","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"../data/sentences.json"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script src="/js/utils.js"></script><script src="/js/hexo-theme-yun.js"></script><meta name="description" content="前言：作为一个过来人，大家一定不要学习go语言，java是世界上最好的语言  Go第一部分，初窥门径数据类型   序号 类型和描述    1 布尔类型 ，false和true，常见的例子，var b bool &#x3D; false   2 数字类型，整型和浮点型，int ，float32、float64   3 字符串类型，string   4 派生类型:指针、数组、Map、函数、接口等   变量声明">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go语言">
+<meta property="og:url" content="http://example.com/2021/10/27/go/index.html">
+<meta property="og:site_name" content="thetianxia-天下的小窝">
+<meta property="og:description" content="前言：作为一个过来人，大家一定不要学习go语言，java是世界上最好的语言  Go第一部分，初窥门径数据类型   序号 类型和描述    1 布尔类型 ，false和true，常见的例子，var b bool &#x3D; false   2 数字类型，整型和浮点型，int ，float32、float64   3 字符串类型，string   4 派生类型:指针、数组、Map、函数、接口等   变量声明">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.runoob.com/wp-content/uploads/2015/06/ZBuVRsKmCoH6fzoz.png">
+<meta property="article:published_time" content="2021-10-27T05:49:26.991Z">
+<meta property="article:modified_time" content="2021-10-31T06:01:27.015Z">
+<meta property="article:author" content="the tianxia">
+<meta property="article:tag" content="go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.runoob.com/wp-content/uploads/2015/06/ZBuVRsKmCoH6fzoz.png"><script src="/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="the tianxia"><img width="96" loading="lazy" src="/../images/head.jpg" alt="the tianxia"><span class="site-author-status" title="缺女朋友">😭</span></a><div class="site-author-name"><a href="/about/">the tianxia</a></div><span class="site-name">thetianxia-天下的小窝</span><sub class="site-subtitle"></sub><div class="site-desciption"></div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">1</span></a></div><div class="site-state-item"><a href="/categories/" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">1</span></a></div><div class="site-state-item"><a href="/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">1</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://yun.yunyoujun.cn" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="1874712420@qq.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1874712420&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Go"><span class="toc-number">1.</span> <span class="toc-text">Go</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%8C%E5%88%9D%E7%AA%A5%E9%97%A8%E5%BE%84"><span class="toc-number">2.</span> <span class="toc-text">第一部分，初窥门径</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">数据类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E5%A3%B0%E6%98%8E"><span class="toc-number">2.2.</span> <span class="toc-text">变量声明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F%E5%A3%B0%E6%98%8E"><span class="toc-number">2.3.</span> <span class="toc-text">常量声明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go%E8%AF%AD%E8%A8%80%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">2.4.</span> <span class="toc-text">Go语言运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.5.</span> <span class="toc-text">算数运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.6.</span> <span class="toc-text">关系运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.7.</span> <span class="toc-text">逻辑运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.8.</span> <span class="toc-text">位运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.9.</span> <span class="toc-text">赋值运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.10.</span> <span class="toc-text">其他运算符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.11.</span> <span class="toc-text">运算符优先级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="toc-number">2.12.</span> <span class="toc-text">条件语句</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#if%E8%AF%AD%E5%8F%A5"><span class="toc-number">2.12.1.</span> <span class="toc-text">if语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Switch"><span class="toc-number">2.12.2.</span> <span class="toc-text">Switch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#select"><span class="toc-number">2.12.3.</span> <span class="toc-text">select</span></a></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://example.com/2021/10/27/go/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="the tianxia"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="thetianxia-天下的小窝"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">go语言</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2021-10-27 13:49:26" itemprop="dateCreated datePublished" datetime="2021-10-27T13:49:26+08:00">2021-10-27</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="修改时间：2021-10-31 14:01:27" itemprop="dateModified" datetime="2021-10-31T14:01:27+08:00">2021-10-31</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/categories/%E5%8D%9A%E5%AE%A2/" style="--text-color:dimgray" itemprop="url" rel="index"><span itemprop="text">博客</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/tags/go/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">go</span></a></span></div><div class="post-author"><span class="author-name">thetianxia</span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><blockquote>
+<p>前言：作为一个过来人，大家一定<del>不</del>要学习go语言，java是世界上最好的语言</p>
+</blockquote>
+<h1 id="Go"><a href="#Go" class="headerlink" title="Go"></a>Go</h1><h1 id="第一部分，初窥门径"><a href="#第一部分，初窥门径" class="headerlink" title="第一部分，初窥门径"></a>第一部分，初窥门径</h1><h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><table>
+<thead>
+<tr>
+<th>序号</th>
+<th>类型和描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>布尔类型 ，false和true，常见的例子，var b bool = false</td>
+</tr>
+<tr>
+<td>2</td>
+<td>数字类型，整型和浮点型，int ，float32、float64</td>
+</tr>
+<tr>
+<td>3</td>
+<td>字符串类型，string</td>
+</tr>
+<tr>
+<td>4</td>
+<td><b>派生类型:</b>指针、数组、Map、函数、接口等</td>
+</tr>
+</tbody></table>
+<h2 id="变量声明"><a href="#变量声明" class="headerlink" title="变量声明"></a>变量声明</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第一种，先声明，在赋值</span></span><br><span class="line"><span class="keyword">var</span> name <span class="keyword">string</span></span><br><span class="line">name = <span class="string">&quot;你好世界&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//第二种，自动判定变量类型</span></span><br><span class="line"><span class="keyword">var</span> name =<span class="string">&quot;你好世界&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//第三种，使用:=</span></span><br><span class="line">name := <span class="string">&quot;你好世界&quot;</span><span class="comment">//等同于第一种</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//多变量声明</span></span><br><span class="line">a,b,c, := <span class="number">1</span>,<span class="literal">false</span>,<span class="string">&quot;你好世界&quot;</span></span><br><span class="line">/---------分割线----------/</span><br><span class="line"><span class="keyword">var</span> a,b <span class="keyword">int</span> = <span class="number">1</span>,<span class="number">2</span></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	a <span class="keyword">int</span></span><br><span class="line">    b <span class="keyword">bool</span></span><br><span class="line">)</span><br><span class="line">a =<span class="number">1</span></span><br><span class="line">b =<span class="literal">false</span></span><br><span class="line">/---------分割线----------/</span><br><span class="line"><span class="keyword">var</span> a,b = <span class="number">1</span>,<span class="literal">false</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="常量声明"><a href="#常量声明" class="headerlink" title="常量声明"></a>常量声明</h2><blockquote>
+<p>常量就是运行中不会被修改的量</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> URL <span class="keyword">string</span> = <span class="string">&quot;www.baidu.com&quot;</span></span><br><span class="line"><span class="keyword">const</span> NUM,FLAG = <span class="number">1</span>,<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>常量还可以用作枚举</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span>(</span><br><span class="line">	a = <span class="string">&quot;abc&quot;</span></span><br><span class="line">    b = <span class="literal">false</span></span><br><span class="line">    c = <span class="number">123</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>iota，特殊常量</p>
+<p>说明: iota 在 const关键字出现时将被重置为 0(const 内部的第一行之前)，const 中每新增一行常量声明将使 iota 计数一次(iota 可理解为 const 语句块中的行索引)。</p>
+<p>iota 可以被用作枚举值：</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">            a = <span class="literal">iota</span>   <span class="comment">//0</span></span><br><span class="line">            b          <span class="comment">//1</span></span><br><span class="line">            c          <span class="comment">//2</span></span><br><span class="line">            d = <span class="string">&quot;ha&quot;</span>   <span class="comment">//独立值，iota += 1</span></span><br><span class="line">            e          <span class="comment">//&quot;ha&quot;   iota += 1</span></span><br><span class="line">            f = <span class="number">100</span>    <span class="comment">//iota +=1</span></span><br><span class="line">            g          <span class="comment">//100  iota +=1</span></span><br><span class="line">            h = <span class="literal">iota</span>   <span class="comment">//7,恢复计数</span></span><br><span class="line">            i          <span class="comment">//8</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<h2 id="Go语言运算符"><a href="#Go语言运算符" class="headerlink" title="Go语言运算符"></a>Go语言运算符</h2><ol>
+<li><h2>算数运算符</h2>
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+<th>实例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+</td>
+<td>相加</td>
+<td>a+b输出30</td>
+</tr>
+<tr>
+<td>-</td>
+<td>相减</td>
+<td>a-b输出10</td>
+</tr>
+<tr>
+<td>*</td>
+<td>相乘</td>
+<td>a*b输出200</td>
+</tr>
+<tr>
+<td>/</td>
+<td>相除</td>
+<td>a/b输出2</td>
+</tr>
+<tr>
+<td>%</td>
+<td>取模</td>
+<td>a%b输出0</td>
+</tr>
+<tr>
+<td>++</td>
+<td>自增</td>
+<td>a++输出21</td>
+</tr>
+<tr>
+<td>–</td>
+<td>自减</td>
+<td>a–输出19</td>
+</tr>
+</tbody></table>
+</li>
+<li><h2>关系运算符</h2>
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>==</td>
+<td>判断两个值是否相等</td>
+</tr>
+<tr>
+<td>!=</td>
+<td>判断两个值是否不相等</td>
+</tr>
+<tr>
+<td>&gt;</td>
+<td>判断左边的值是否大于右边</td>
+</tr>
+<tr>
+<td>&lt;</td>
+<td>判断左边的值是否小于右边</td>
+</tr>
+<tr>
+<td>&gt;=</td>
+<td>判断左边的值是否大于等于右边</td>
+</tr>
+<tr>
+<td>&lt;=</td>
+<td>判断左边的值是否小于等于右边</td>
+</tr>
+</tbody></table>
+</li>
+<li><h2>逻辑运算符</h2>
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&amp;&amp;</td>
+<td>逻辑 AND 运算符。 如果两边的操作数都是 True，则条件 True，否则为 False。</td>
+</tr>
+<tr>
+<td>||</td>
+<td>逻辑 OR 运算符。 如果两边的操作数有一个 True，则条件 True，否则为 False。</td>
+</tr>
+<tr>
+<td>!</td>
+<td>逻辑 NOT 运算符。 如果条件为 True，则逻辑 NOT 条件 False，否则为 True。</td>
+</tr>
+</tbody></table>
+</li>
+<li><h2>位运算符</h2>
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&amp;</td>
+<td>按位与运算符”&amp;”是双目运算符。</td>
+</tr>
+<tr>
+<td>|</td>
+<td>按位或运算符”|”是双目运算符。</td>
+</tr>
+<tr>
+<td>^</td>
+<td>按位异或运算符”^”是双目运算符。</td>
+</tr>
+<tr>
+<td>&lt;&lt;</td>
+<td>左移运算符”&lt;&lt;”是双目运算符。</td>
+</tr>
+<tr>
+<td>&gt;&gt;</td>
+<td>右移运算符”&gt;&gt;”是双目运算符。</td>
+</tr>
+</tbody></table>
+</li>
+<li><h2>赋值运算符</h2>
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>=</td>
+<td>简单的赋值运算符，将一个表达式的值赋给一个左值</td>
+</tr>
+<tr>
+<td>+=</td>
+<td>相加后再赋值</td>
+</tr>
+<tr>
+<td>-=</td>
+<td>相减后再赋值</td>
+</tr>
+<tr>
+<td>*=</td>
+<td>相乘后再赋值</td>
+</tr>
+<tr>
+<td>/=</td>
+<td>相除后再赋值</td>
+</tr>
+<tr>
+<td>%=</td>
+<td>求余后再赋值</td>
+</tr>
+<tr>
+<td>&lt;&lt;==</td>
+<td>左移后赋值</td>
+</tr>
+<tr>
+<td>&gt;&gt;==</td>
+<td>右移后赋值</td>
+</tr>
+<tr>
+<td>&amp;=</td>
+<td>按位与后赋值</td>
+</tr>
+<tr>
+<td>^=</td>
+<td>按位异或后赋值</td>
+</tr>
+<tr>
+<td>|=</td>
+<td>按位或后赋值</td>
+</tr>
+</tbody></table>
+</li>
+<li><h2>其他运算符</h2>
+
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&amp;</td>
+<td>返回变量存储地址</td>
+</tr>
+<tr>
+<td>*</td>
+<td>指针变量。</td>
+</tr>
+</tbody></table>
+</li>
+<li><h2>运算符优先级</h2>
+
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>运算符</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>* / % &lt;&lt; &gt;&gt; &amp; &amp;^</td>
+</tr>
+<tr>
+<td>2</td>
+<td>+ -</td>
+</tr>
+<tr>
+<td>3</td>
+<td>== != &lt; &lt;= &gt; &gt;=</td>
+</tr>
+<tr>
+<td>4</td>
+<td>&amp;&amp;</td>
+</tr>
+<tr>
+<td>5</td>
+<td>||</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+<h2 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h2><p><img src="https://www.runoob.com/wp-content/uploads/2015/06/ZBuVRsKmCoH6fzoz.png" alt="流程图" loading="lazy"></p>
+<h3 id="if语句"><a href="#if语句" class="headerlink" title="if语句"></a>if语句</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> a&gt;<span class="number">0</span>&#123;</span><br><span class="line">    语句</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> a&lt;<span class="number">0</span>&#123;</span><br><span class="line">      嵌套<span class="keyword">if</span></span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> a&gt;<span class="number">0</span>&#123;</span><br><span class="line">        <span class="keyword">else</span>....<span class="keyword">if</span>...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Switch"><a href="#Switch" class="headerlink" title="Switch"></a>Switch</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="comment">/* 定义局部变量 */</span></span><br><span class="line">   <span class="keyword">var</span> grade <span class="keyword">string</span> = <span class="string">&quot;B&quot;</span></span><br><span class="line">   <span class="keyword">var</span> marks <span class="keyword">int</span> = <span class="number">90</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">switch</span> marks &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">90</span>: grade = <span class="string">&quot;A&quot;</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">80</span>: grade = <span class="string">&quot;B&quot;</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">50</span>,<span class="number">60</span>,<span class="number">70</span> : grade = <span class="string">&quot;C&quot;</span></span><br><span class="line">      <span class="keyword">default</span>: grade = <span class="string">&quot;D&quot;</span>  </span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">switch</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> grade == <span class="string">&quot;A&quot;</span> :</span><br><span class="line">         fmt.Printf(<span class="string">&quot;优秀!\n&quot;</span> )    </span><br><span class="line">      <span class="keyword">case</span> grade == <span class="string">&quot;B&quot;</span>, grade == <span class="string">&quot;C&quot;</span> :</span><br><span class="line">         fmt.Printf(<span class="string">&quot;良好\n&quot;</span> )      </span><br><span class="line">      <span class="keyword">case</span> grade == <span class="string">&quot;D&quot;</span> :</span><br><span class="line">         fmt.Printf(<span class="string">&quot;及格\n&quot;</span> )      </span><br><span class="line">      <span class="keyword">case</span> grade == <span class="string">&quot;F&quot;</span>:</span><br><span class="line">         fmt.Printf(<span class="string">&quot;不及格\n&quot;</span> )</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">         fmt.Printf(<span class="string">&quot;差\n&quot;</span> );</span><br><span class="line">   &#125;</span><br><span class="line">   fmt.Printf(<span class="string">&quot;你的等级是 %s\n&quot;</span>, grade );      </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="select"><a href="#select" class="headerlink" title="select"></a>select</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   <span class="keyword">var</span> c1, c2, c3 <span class="keyword">chan</span> <span class="keyword">int</span></span><br><span class="line">   <span class="keyword">var</span> i1, i2 <span class="keyword">int</span></span><br><span class="line">   <span class="keyword">select</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> i1 = &lt;-c1:</span><br><span class="line">         fmt.Printf(<span class="string">&quot;received &quot;</span>, i1, <span class="string">&quot; from c1\n&quot;</span>)</span><br><span class="line">      <span class="keyword">case</span> c2 &lt;- i2:</span><br><span class="line">         fmt.Printf(<span class="string">&quot;sent &quot;</span>, i2, <span class="string">&quot; to c2\n&quot;</span>)</span><br><span class="line">      <span class="keyword">case</span> i3, ok := (&lt;-c3):  <span class="comment">// same as: i3, ok := &lt;-c3</span></span><br><span class="line">         <span class="keyword">if</span> ok &#123;</span><br><span class="line">            fmt.Printf(<span class="string">&quot;received &quot;</span>, i3, <span class="string">&quot; from c3\n&quot;</span>)</span><br><span class="line">         &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            fmt.Printf(<span class="string">&quot;c3 is closed\n&quot;</span>)</span><br><span class="line">         &#125;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">         fmt.Printf(<span class="string">&quot;no communication\n&quot;</span>)</span><br><span class="line">   &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>thetianxia</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://example.com/2021/10/27/go/" title="go语言">http://example.com/2021/10/27/go/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></section></article></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>要不要和我说些什么？</span><br></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2021 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> the tianxia</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v5.4.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.6.2</span></div><div class="live_time"><span>本博客已萌萌哒地运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  setTimeout(blog_live_time, 1000);
+  const start = new Date('2021-10-27T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div></body></html>
