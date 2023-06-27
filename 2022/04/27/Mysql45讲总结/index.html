@@ -1,167 +1,88 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="the tianxia"><meta name="copyright" content="the tianxia"><meta name="generator" content="Hexo 5.4.0"><meta name="theme" content="hexo-theme-yun"><title>Mysql45讲总结 | thetianxia-天下</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.25/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
-  [".post-card",".post-content img"].forEach((target)=> {
-    ScrollReveal().reveal(target);
-  })
+.post-block {
+  color: var(--hty-text-color);
+  margin: 0 1rem;
+  padding: 1rem;
+  background-color: var(--post-block-bg-color);
+mobile()
 }
-document.addEventListener("DOMContentLoaded", initScrollReveal);
-document.addEventListener("pjax:success", initScrollReveal);
-</script><link rel="icon" href="/blog/favicon.ico"><link rel="mask-icon" href="/blog/favicon.ico" color="#0078E7"><link rel="alternate icon" href="/blog/yun.ico"><link rel="preload" href="/blog/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/blog/js/utils.js" as="script"><link rel="preload" href="/blog/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/blog/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
-    const Yun = window.Yun || {};
-    window.CONFIG = {"hostname":"github.com","root":"/blog/","title":"天下的知识库","version":"1.6.2","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"../data/sentences.json"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
-  </script><link rel="stylesheet" href="/blog/css/hexo-theme-yun.css"><script src="/blog/js/utils.js"></script><script src="/blog/js/hexo-theme-yun.js"></script><meta name="description" content="Mysql45讲总结Server层sql查询语句是怎么执行的 客户端连接到连接器——-》查询缓存——》命中则返回数据——-》否则进入分析器分析词法和语法，然后进入优化器选择索引，最后执行器操作引擎（Innodb、MyISAM、Memory），返回结果。  sql更新语句是怎么执行的 更新语句的过程和查询语句一样，并且涉及了两个日志模块，redo log（重做日志） 和binlog（归档日志） 执行">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Mysql45讲总结">
-<meta property="og:url" content="https://github.com/2022/04/27/Mysql45%E8%AE%B2%E6%80%BB%E7%BB%93/index.html">
-<meta property="og:site_name" content="thetianxia-天下">
-<meta property="og:description" content="Mysql45讲总结Server层sql查询语句是怎么执行的 客户端连接到连接器——-》查询缓存——》命中则返回数据——-》否则进入分析器分析词法和语法，然后进入优化器选择索引，最后执行器操作引擎（Innodb、MyISAM、Memory），返回结果。  sql更新语句是怎么执行的 更新语句的过程和查询语句一样，并且涉及了两个日志模块，redo log（重做日志） 和binlog（归档日志） 执行">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/9ed86644d5f39efb0efec595abb92e3e.png">
-<meta property="og:image" content="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/5ae7d074c34bc5bd55c82781de670c28.png">
-<meta property="og:image" content="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/16a7950217b3f0f4ed02db5db59562a7.png">
-<meta property="og:image" content="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/2e5bff4910ec189fe1ee6e2ecc7b4bbe.png">
-<meta property="article:published_time" content="2022-04-27T12:21:55.102Z">
-<meta property="article:modified_time" content="2022-10-16T06:33:55.468Z">
-<meta property="article:author" content="the tianxia">
-<meta property="article:tag" content="Mysql">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/9ed86644d5f39efb0efec595abb92e3e.png"><script src="/blog/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/blog/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/blog/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/blog/about/" title="the tianxia"><img width="96" loading="lazy" src="/blog/images/head_boji.jpg" alt="the tianxia"><span class="site-author-status" title="学习挣小钱钱">😤</span></a><div class="site-author-name"><a href="/blog/about/">the tianxia</a></div><span class="site-name">thetianxia-天下</span><sub class="site-subtitle">功不唐捐，玉汝于成</sub><div class="site-desciption">welcome to my blog,have a good time!</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/blog/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/blog/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">5</span></a></div><div class="site-state-item"><a href="/blog/categories/" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">5</span></a></div><div class="site-state-item"><a href="/blog/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">7</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://www.yuque.com/xiaocongbandoufu-suh9q" title="我的语雀"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-yuque"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="1874712420@qq.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1874712420&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/blog/albums/" title="我的相册" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-gallery-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mysql45%E8%AE%B2%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">Mysql45讲总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Server%E5%B1%82"><span class="toc-number">1.1.</span> <span class="toc-text">Server层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sql%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5%E6%98%AF%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="toc-number">1.1.1.</span> <span class="toc-text">sql查询语句是怎么执行的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sql%E6%9B%B4%E6%96%B0%E8%AF%AD%E5%8F%A5%E6%98%AF%E6%80%8E%E4%B9%88%E6%89%A7%E8%A1%8C%E7%9A%84"><span class="toc-number">1.1.2.</span> <span class="toc-text">sql更新语句是怎么执行的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98%EF%BC%888-0%E5%B7%B2%E5%88%A0%E9%99%A4%EF%BC%89"><span class="toc-number">1.1.3.</span> <span class="toc-text">查询缓存（8.0已删除）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E5%99%A8"><span class="toc-number">1.1.4.</span> <span class="toc-text">分析器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="toc-number">1.1.5.</span> <span class="toc-text">优化器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-number">1.1.6.</span> <span class="toc-text">执行器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#binlog"><span class="toc-number">1.2.</span> <span class="toc-text">binlog</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">三种格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E6%9C%BA%E5%88%B6"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">写入机制</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redolog"><span class="toc-number">1.3.</span> <span class="toc-text">redolog</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#redolog%E5%86%99%E5%85%A5%E6%9C%BA%E5%88%B6"><span class="toc-number">1.3.0.1.</span> <span class="toc-text">redolog写入机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WAL%E6%9C%BA%E5%88%B6"><span class="toc-number">1.3.0.2.</span> <span class="toc-text">WAL机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%B7%E8%84%8F%E9%A1%B5"><span class="toc-number">1.3.0.3.</span> <span class="toc-text">刷脏页</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4"><span class="toc-number">1.3.0.4.</span> <span class="toc-text">两阶段提交</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95"><span class="toc-number">1.4.</span> <span class="toc-text">索引</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E7%BB%B4%E6%8A%A4"><span class="toc-number">1.4.0.1.</span> <span class="toc-text">索引维护</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A6%86%E7%9B%96%E7%B4%A2%E5%BC%95"><span class="toc-number">1.4.0.2.</span> <span class="toc-text">覆盖索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%80%E5%B7%A6%E5%89%8D%E7%BC%80%E5%8E%9F%E5%88%99"><span class="toc-number">1.4.0.3.</span> <span class="toc-text">最左前缀原则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B4%A2%E5%BC%95%E4%B8%8B%E6%8E%A8"><span class="toc-number">1.4.0.4.</span> <span class="toc-text">索引下推</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%94%AF%E4%B8%80%E7%B4%A2%E5%BC%95%E5%92%8C%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95"><span class="toc-number">1.4.0.5.</span> <span class="toc-text">唯一索引和普通索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8%E7%B4%A2%E5%BC%95%E9%80%89%E6%8B%A9"><span class="toc-number">1.4.0.6.</span> <span class="toc-text">优化器索引选择</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="toc-number">1.4.0.7.</span> <span class="toc-text">前缀索引</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.5.</span> <span class="toc-text">事务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">1.5.0.1.</span> <span class="toc-text">事务隔离级别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">1.5.0.2.</span> <span class="toc-text">实现原理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mysql%E7%9A%84%E5%90%84%E7%A7%8D%E9%94%81"><span class="toc-number">1.6.</span> <span class="toc-text">Mysql的各种锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E9%94%81"><span class="toc-number">1.6.0.1.</span> <span class="toc-text">全局锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A8%E7%BA%A7%E9%94%81"><span class="toc-number">1.6.0.2.</span> <span class="toc-text">表级锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%8C%E9%94%81"><span class="toc-number">1.6.0.3.</span> <span class="toc-text">行锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#next-key-lock"><span class="toc-number">1.6.0.4.</span> <span class="toc-text">next-key lock</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E5%BA%8F"><span class="toc-number">1.7.</span> <span class="toc-text">排序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A8%E5%AD%97%E6%AE%B5%E6%8E%92%E5%BA%8F"><span class="toc-number">1.7.0.1.</span> <span class="toc-text">全字段排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#rowid-%E6%8E%92%E5%BA%8F"><span class="toc-number">1.7.0.2.</span> <span class="toc-text">rowid 排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E7%B4%A2%E5%BC%95%E6%8E%92%E5%BA%8F"><span class="toc-number">1.7.0.3.</span> <span class="toc-text">利用索引排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E4%B8%B4%E6%97%B6%E8%A1%A8-%E7%A3%81%E7%9B%98%E4%B8%B4%E6%97%B6%E8%A1%A8"><span class="toc-number">1.7.0.4.</span> <span class="toc-text">内存临时表  磁盘临时表</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%BD%B1%E5%93%8D%E6%80%A7%E8%83%BD%E7%9A%84%E7%82%B9"><span class="toc-number">1.8.</span> <span class="toc-text">其他影响性能的点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-number">1.8.0.1.</span> <span class="toc-text">使用函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%90%E5%BC%8F%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.8.0.2.</span> <span class="toc-text">隐式类型转换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9A%90%E5%BC%8F%E5%AD%97%E7%AC%A6%E7%BC%96%E7%A0%81%E8%BD%AC%E5%8C%96"><span class="toc-number">1.8.0.3.</span> <span class="toc-text">隐式字符编码转化</span></a></li></ol></li></ol></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://github.com/blog/2022/04/27/Mysql45%E8%AE%B2%E6%80%BB%E7%BB%93/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="the tianxia"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="thetianxia-天下"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Mysql45讲总结</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2022-04-27 20:21:55" itemprop="dateCreated datePublished" datetime="2022-04-27T20:21:55+08:00">2022-04-27</time><span class="post-meta-divider">-</span><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-2-line"></use></svg></span> <time title="修改时间：2022-10-16 14:33:55" itemprop="dateModified" datetime="2022-10-16T14:33:55+08:00">2022-10-16</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/blog/categories/%E5%8D%9A%E5%AE%A2/" style="--text-color:dimgray" itemprop="url" rel="index"><span itemprop="text">博客</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/blog/tags/Mysql/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Mysql</span></a></span></div><div class="post-author"><span class="author-name">thetianxia</span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><h1 id="Mysql45讲总结"><a href="#Mysql45讲总结" class="headerlink" title="Mysql45讲总结"></a>Mysql45讲总结</h1><h2 id="Server层"><a href="#Server层" class="headerlink" title="Server层"></a>Server层</h2><h3 id="sql查询语句是怎么执行的"><a href="#sql查询语句是怎么执行的" class="headerlink" title="sql查询语句是怎么执行的"></a>sql查询语句是怎么执行的</h3><blockquote>
-<p>客户端连接到连接器——-》查询缓存——》命中则返回数据——-》否则进入分析器分析词法和语法，然后进入优化器选择索引，最后执行器操作引擎（Innodb、MyISAM、Memory），返回结果。</p>
-</blockquote>
-<h3 id="sql更新语句是怎么执行的"><a href="#sql更新语句是怎么执行的" class="headerlink" title="sql更新语句是怎么执行的"></a>sql更新语句是怎么执行的</h3><blockquote>
-<p>更新语句的过程和查询语句一样，并且涉及了两个日志模块，redo log（重做日志） 和binlog（归档日志）</p>
-<p>执行器通过引擎找到操作的行—-》将数据更新到的新的数据—》引擎写入这行数据—-》记录redo log（prepare）—–》记录binlog—》提交（redo log commit状态）。</p>
-</blockquote>
-<h3 id="查询缓存（8-0已删除）"><a href="#查询缓存（8-0已删除）" class="headerlink" title="查询缓存（8.0已删除）"></a>查询缓存（8.0已删除）</h3><p>sql执行会先去查询缓存中查找，查询缓存以key—value的形式存储，key是查询语句，value是查询结果。但是一般不建议使用查询缓存，因为只要更新表，那么这个表的所有缓存都会被清空。</p>
-<p>使用场景：静态表很久不更新的那种</p>
-<p>参数设置：query_cache_type设置为DEMAND，如果要使用缓存，则可以在sql上显示使用SQL_CACHE</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> SQL_CACHE <span class="operator">*</span> <span class="keyword">from</span> T <span class="keyword">where</span> ID<span class="operator">=</span><span class="number">10</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="分析器"><a href="#分析器" class="headerlink" title="分析器"></a>分析器</h3><p>首先分析器进行词法分析，判断SQL语句中的每个词代表什么。之后在进入语法分析，判断sql是否合法。</p>
-<h3 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h3><p>经过分析器，mysql就知道自己要做什么。执行前，还要经过优化器优化。优化器会决定选择哪个索引，以及多表查询表的连接顺序等，虽然逻辑一致，但是执行效率不一样。但是有时候优化器会选错方法</p>
-<h3 id="执行器"><a href="#执行器" class="headerlink" title="执行器"></a>执行器</h3><p>分析器让mysql知道要做什么，优化器让mysql知道怎么做，执行器开始执行的时候，会先去查询权限，有权限才会去打开表继续执行，执行器使用的是引擎提供的接口。</p>
-<p>执行器调用引擎接口拿到第一条数据—》如果满足条件则存在结果集里面，否则就跳过。—-》然后在通过引擎接口获取第二条数据，一直到最后一条。</p>
-<p>使用索引也是这个过程。</p>
-<h2 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h2><p>binlog是逻辑日志，并且是追加写的。binlog是server层的归档日志，所以无论什么引擎都可以使用，但是binlog没有crash-safe能力。</p>
-<h4 id="三种格式"><a href="#三种格式" class="headerlink" title="三种格式"></a>三种格式</h4><p>1、statement格式</p>
-<p>2、row格式</p>
-<p>3、mixed格式</p>
-<h4 id="写入机制"><a href="#写入机制" class="headerlink" title="写入机制"></a>写入机制</h4><p>事务执行过程中，先把日志写到binlog cache中，事务提交的时候再把binlog cache写入到binlog文件中。一个事务的binlog是不能被拆分的，系统会给binlog cache分配一片内存，每个线程一个，可以通知参数</p>
-<p>binlog_cache_size设置大小，如果超过了这个参数，就会暂存到磁盘中。事务提交的时候，会将binlog cache写入到binlog文件中，并清空binlog cache。</p>
-<p><img src="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/9ed86644d5f39efb0efec595abb92e3e.png" alt="img" loading="lazy"></p>
-<p>write动作将binlog cache写入到系统的 page cache中，fsync才是将数据持久化到操盘。</p>
-<p>write 和 fsync 的时机，是由参数 sync_binlog 控制的：</p>
-<ol>
-<li>sync_binlog=0 的时候，表示每次提交事务都只 write，不 fsync；</li>
-<li>sync_binlog=1 的时候，表示每次提交事务都会执行 fsync；</li>
-<li>sync_binlog=N(N&gt;1) 的时候，表示每次提交事务都 write，但累积 N 个事务后才 fsync。</li>
-</ol>
-<h2 id="redolog"><a href="#redolog" class="headerlink" title="redolog"></a>redolog</h2><h4 id="redolog写入机制"><a href="#redolog写入机制" class="headerlink" title="redolog写入机制"></a>redolog写入机制</h4><p>事务执行过程中，生成的日志会先存在 redo log buffer中，日志提交的时候将redo log buffer持久化。</p>
-<p>为了控制 redo log 的写入策略，InnoDB 提供了 innodb_flush_log_at_trx_commit 参数，它有三种可能取值：</p>
-<ol>
-<li>设置为 0 的时候，表示每次事务提交时都只是把 redo log 留在 redo log buffer 中 ;</li>
-<li>设置为 1 的时候，表示每次事务提交时都将 redo log 直接持久化到磁盘；</li>
-<li>设置为 2 的时候，表示每次事务提交时都只是把 redo log 写到 page cache。</li>
-</ol>
-<p>innodb 有一个后台线程，会每隔1s将redo log buffer中的日志写入page cache然后fsync持久化磁盘，因此事务没有提交redo log也有可能被持久化。</p>
-<p>除此之外，</p>
-<p>1、如果<strong>redo log buffer</strong>占内存大小即将达到 <strong>innodb_log_buffer_size</strong> 一半的时候，会主动写入到 page cache，因为事务没有提交，因此不会fsync到磁盘。</p>
-<p>2、当并行的事务提交时，会顺带将这个事务的redo log持久化磁盘。</p>
-<p>时序上，要经过两阶段提交。redo log prepare阶段，持久化binlog，redo log commit阶段。</p>
-<p>如果把 innodb_flush_log_at_trx_commit 设置成 1，那么 redo log 在 prepare 阶段就要持久化一次，因为有一个崩溃恢复逻辑是要依赖于 prepare 的 redo log，再加上 binlog 来恢复的。</p>
-<p><strong>双 1配置</strong>，指的就是 sync_binlog 和 innodb_flush_log_at_trx_commit 都设置成 1。也就是说，一个事务完整提交前，需要等待两次刷盘，一次是 redo log（prepare 阶段），一次是 binlog。</p>
-<p><strong>组提交机制</strong></p>
-<p>日志写盘的时候，会一次写入一组日志，减小了磁盘的写压力。</p>
-<p><img src="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/5ae7d074c34bc5bd55c82781de670c28.png" alt="img" loading="lazy"></p>
-<h4 id="WAL机制"><a href="#WAL机制" class="headerlink" title="WAL机制"></a>WAL机制</h4><p>WAL机制是Write-Ahead-Loggin，意思就是现写日志，再写磁盘。</p>
-<p>InnoDB引擎在更新时，会先将记录写在redo log里面，并且更新内存，在系统空闲的时候，将操作记录更新到磁盘上。redo log是固定大小的，默认是4GB，写入的过程是循环写的。</p>
-<p>如果日志很多，导致redo log被写满，这时就会擦除一部分日志，check point指向的要擦除的位置，擦除前要先更新到数据文件。write pos指向的写入的位置，write pos和check point之间是可以写入空间。</p>
-<p><img src="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/16a7950217b3f0f4ed02db5db59562a7.png" alt="img" loading="lazy"></p>
-<p>有了redo log，数据就可以保证提价的记录都不会丢失，这个能力称为crash-safe。</p>
-<h4 id="刷脏页"><a href="#刷脏页" class="headerlink" title="刷脏页"></a>刷脏页</h4><p>数据更新之后，只是记录了redo log日志，更新的是内存的数据，并没有写入磁盘。所以这里将随机磁盘io转换为redo log的顺序写，提高了效率。</p>
-<p>因为磁盘中的数据页和内存中的数据页不一致，因此这种数据页称为脏页，而内容一致的数据页叫干净页。mysql将内存数据写入磁盘的过程，称为flush。</p>
-<ul>
-<li>redo log是循环写入的，当pos和checkpoint间的空间要用完的时候，mysql会擦掉一些记录，以便后续写入新的数据。在擦到这些记录的时候，会将涉及的脏页都flush到磁盘。</li>
-<li>如果内存不足，mysql会淘汰掉一些数据页，如果淘汰的数据页中包含脏页，就需先flush。</li>
-<li>mysql在空闲的时间会抓紧时间flush脏页。</li>
-<li>mysql正常关闭的时候会flush所有脏页。</li>
-</ul>
-<p><strong>如果redo log写满，触发flush会导致阻塞全部更新操作，会导致性能下降。并且一次性刷掉太多脏页也会导致响应时间过长。</strong></p>
-<h4 id="两阶段提交"><a href="#两阶段提交" class="headerlink" title="两阶段提交"></a>两阶段提交</h4><p><img src="http://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/MySQL%E5%AE%9E%E6%88%9845%E8%AE%B2/assets/2e5bff4910ec189fe1ee6e2ecc7b4bbe.png" alt="img" loading="lazy"></p>
-<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>常见的索引模型有 哈希表、有序数组、搜索树</p>
-<p>Innodb使用的是B+树索引模型。</p>
-<p>主键索引的叶子节点存放的整行的数据，而非主键索引存放的是主键索引，通过非主键索引查询，会有一个回表的过程，查询处对应的id主键，在通过主键去获取整行数据。</p>
-<h4 id="索引维护"><a href="#索引维护" class="headerlink" title="索引维护"></a>索引维护</h4><p>如果索引是自增的，那么B+树会依次添加，性能会比较高，单如果索引字段不是递增的，在中间插入就需要挪动后面的数据。会导致数据页的利用很低，产生很多间隙，如果数据页满的情况下，还会产生页分裂，挪动部分数据去新的数据页。如果相邻的两个数据页由于删除了数据导致利用很低，就会触发页合并。并且索引的大小越小，占用空间就越小，所以使用自增主键是更合理的选择。</p>
-<h4 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h4><p>执行语句使用了非主键索引，在该非主键索引树上只存有该索引字段以及主键字段，因此如果需要其他字段的数据，就会有一个回表的过程，通过主键去主键索引树上取得整行数据，获取对应字段的数据。但是如果非主键索引树上包含了要查询的所有字段，就不会有回表的过程，这个特性称为覆盖索引。</p>
-<p>覆盖索引可以减少搜索的次数，提高性能。</p>
-<h4 id="最左前缀原则"><a href="#最左前缀原则" class="headerlink" title="最左前缀原则"></a>最左前缀原则</h4><p>联合索引的索引树中，索引项是按照索引中字段的顺序排序的。如果查询语句用到了联合索引左边的n个索引，那么会使用这个联合索引进行定位。最左前缀可以使 n个索引字段，也可以是字符串索引左边的n个字符。</p>
-<p>在建立联合索引的时候，如果可以通过安排索引内的字段顺序，根据最左前缀原则减少维护一个索引，则优先考虑这个顺序。其次则考虑空间。</p>
-<h4 id="索引下推"><a href="#索引下推" class="headerlink" title="索引下推"></a>索引下推</h4><p>不满足最左前缀的部分，5.6引入了索引下推优化。在索引遍历过程中，会对索引包含的字段进行判断，减少回表次数。</p>
-<h4 id="唯一索引和普通索引"><a href="#唯一索引和普通索引" class="headerlink" title="唯一索引和普通索引"></a>唯一索引和普通索引</h4><p>唯一索引需要判断是否违反唯一性约束，因此需要读入整个数据页，不能用change buffer。</p>
-<p>普通索引可以使用。</p>
-<p>Innodb引擎更新数据的时候，如果对应的数据页正好在内存中，则更新内存，否则更新操作会缓存到change buffer中，下次查询该数据页的时候，将数据页读入内存，然后进行change buffer中与这个页有关的操作。将change buffer应用到对应的数据页的过程称为<strong>merge</strong>。</p>
-<p>change buffer减少了随机io磁盘访问。但是如果普通索引更新之后，立马就查询，就会导致change buffer的merge立即触发，就起不到减少随机io磁盘访问的效果。因此尽量让change buffer的每次merge能够刷新更多的数据。</p>
-<h4 id="优化器索引选择"><a href="#优化器索引选择" class="headerlink" title="优化器索引选择"></a>优化器索引选择</h4><p>优化器在选择索引的时候，会统计每个索引要扫描的行数，行数少的效率就高。而这个行数不是准确的，而是innodb通过估计计算出来的。具体的计算方法就是选N页，统计不同值的个数，然后求得平均值，最后乘以页数就是。通过这种计算，虽然不准备但是相差不多。因此并不是优化器选错索引的原因。如果是非主键索引，优化器会将回表的次数也算入，如果这个代价大于其他索引的话，优化器会选错。</p>
-<p>遇到选错索引这种情况，我们可以使用**force index()<strong>显示的指定。也可以使用</strong>analyze table **修正统计信息。</p>
-<h4 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h4><p>前缀索引可以减少字符串字段索引的大小，但是使用前缀索引，会用不上覆盖索引的查询性能优化。</p>
-<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h4 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h4><p>读未提交、读提交、可重复读、串行化</p>
-<p>配置参数：transaction-isolation配置隔离级别，默认是可重复读</p>
-<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><p>一致性视图，通过回滚实现。</p>
-<p>MVCC是怎么工作的，事务启动的时候，每一个事务都会有一个快照，一致性视图。每一个事务都有一个id，而且每一行数据也都是多个版本，事务更新数据的时候，会产生一个新的版本，本且把事务的id的赋值给这个事务版本的事务id，即为row trx_id，同时旧的版本保留，并且在新的数据版本中可以由足够的信息直接拿到旧的数据版本。</p>
-<p>每个版本的快照实现原理，不是给每个事务单独存一份数据，而是根据undo log计算得到的。</p>
-<p>每个事务更新时的操作是当前读，也就是先读最新的值然后再更新。</p>
-<h2 id="Mysql的各种锁"><a href="#Mysql的各种锁" class="headerlink" title="Mysql的各种锁"></a>Mysql的各种锁</h2><h4 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h4><p>加全局锁的方法：Flush tables with read lock（FTWRL）</p>
-<p>全局锁应用场景是做数据库的全量备份，为了保证一致性，让数据库处于只读状态。</p>
-<p>在支持一致性视图MVCC的引擎，可以使用single-transaction参数启动一个视图，利用一致性视图解决，这个过程也不会影响更新。</p>
-<p>另外，使用<strong>set global readonly=true</strong>也可以让数据库处于只读状态，但是不建议这样做。</p>
-<p>因为FTWRL在客户端因为异常断开后会自动释放全局锁，但是修改global属性会一直生效直到下次修改。其次就是在数据库主从复制中，需要使用<strong>set global readonly=true</strong>判断是主库还是从库，因为从库通过同步主库的binlog实现更新，不能更新，所以要设置为只读。</p>
-<h4 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h4><p>Mysql表级锁有两种，表锁和MDL锁。表级锁分读锁和写锁，读锁不互斥，写锁互斥。</p>
-<p>加锁： lock tables name1 read, name2 write;</p>
-<p>释放锁： unlock tables</p>
-<p>MDL锁时自动添加的，作用是防止事务在使用表的时候被另一个事务修改表的结构。因此MDL锁的是表的结构。增删查改操作会自动加MDL读锁，修改表结构会加MDL写锁。并且申请MDL写锁的事务会阻塞后面所有申请MDL读锁的事务，因此在修改表的时候，可以先保证前面没有长事务，其次是多次重试，失败也不阻塞。</p>
-<h4 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h4><p>行锁在需要的时候才会加上，并且在事务提交后释放。</p>
-<p>因此业务上，将有行锁冲突的逻辑放在最后执行，可以减少每个事务行锁持有时间。</p>
-<p>死锁检测：</p>
-<p>等待超时，可以用innodb_lock_wait_timeout 设置</p>
-<p>死锁检测，发现死锁，主动回滚一条事务。通过将参数 innodb_deadlock_detect 设置为 on，表示开启这个逻辑。</p>
-<h4 id="next-key-lock"><a href="#next-key-lock" class="headerlink" title="next-key lock"></a>next-key lock</h4><p>为了解决幻读，引入了间隙锁。</p>
-<p>间隙锁之间不冲突，间隙锁只会锁 往间隙的插入操作。间隙锁和行锁合称为next-key lock，是前开后闭的。</p>
-<p>优化：</p>
-<p>索引上的等值查询，给唯一索引加锁的时候，间隙锁会退化为行锁</p>
-<p>索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。</p>
-<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><blockquote>
-<p>order by 排序原理总结</p>
-</blockquote>
-<h4 id="全字段排序"><a href="#全字段排序" class="headerlink" title="全字段排序"></a>全字段排序</h4><blockquote>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> city,name,age <span class="keyword">from</span> t <span class="keyword">where</span> city<span class="operator">=</span><span class="string">&#x27;杭州&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> name limit <span class="number">1000</span>  ;（city是索引）</span><br></pre></td></tr></table></figure>
-</blockquote>
-<p>如上sql语句。</p>
-<p>mysql在执行该语句的时候，首先会初始化一个sort_buffer，里面存放的字是查询的字段，然后根据条件从city索引树取出满足条件的id，回表从主键索引取得整行数据，将查询字段值放入sort_buffer中。</p>
-<p>全部放入之后，在sort_buffer中按照排序字段排序，排序之后取出前1000行数据返回。</p>
-<p>所以排序的动作是在<strong>sort_buffer</strong>进行的，如果数据大小不超过 <strong>sort_buffer_size</strong> ,那么排序是在内存中进行的，但是如果超过了限制，就需要使用临时文件辅助排序。</p>
-<p>使用临时文件排序，使用的是归并排序，就是将数据保存到多个文件单独排序之后在整合一起。</p>
-<h4 id="rowid-排序"><a href="#rowid-排序" class="headerlink" title="rowid 排序"></a>rowid 排序</h4><p>如果查询的字段太多，那么每一行的数据大小就很大，使用全字段排序就不合适，mysql提供另一种排序方式：<strong>rowid排序</strong>。当每一行的数据大小超过 <strong>max_length_for_sort_data</strong>就会自动使用该方式排序。</p>
-<p>首先，初始化sort_buffer,放入id和排序字段，然后根据索引city获取满足条件的行id，回表将<strong>id</strong>和<strong>排序字段</strong>放入sort_buffer中，然后根据排序字段排序，取出前1000行回表获得全部数据返回。</p>
-<h4 id="利用索引排序"><a href="#利用索引排序" class="headerlink" title="利用索引排序"></a>利用索引排序</h4><p>mysql索引使用的是B+树，索引数据就是有序的。因此我们可以利用覆盖索引构建一个包含查询字段的联合索引。</p>
-<h4 id="内存临时表-磁盘临时表"><a href="#内存临时表-磁盘临时表" class="headerlink" title="内存临时表  磁盘临时表"></a>内存临时表  磁盘临时表</h4><p><strong>order by rand() 使用了内存临时表，内存临时表排序的时候使用了 rowid 排序方法。</strong></p>
-<p>tmp_table_size 可以设置内存临时表的大小，默认16M。如果大于这个值，内存临时表就会转为磁盘临时表。</p>
-<h2 id="其他影响性能的点"><a href="#其他影响性能的点" class="headerlink" title="其他影响性能的点"></a>其他影响性能的点</h2><h4 id="使用函数"><a href="#使用函数" class="headerlink" title="使用函数"></a>使用函数</h4><p>如果使用函数，就使用不到索引了</p>
-<h4 id="隐式类型转换"><a href="#隐式类型转换" class="headerlink" title="隐式类型转换"></a>隐式类型转换</h4><p>隐式类型转换也会影响效率，如将整型隐式转换为字符型。</p>
-<h4 id="隐式字符编码转化"><a href="#隐式字符编码转化" class="headerlink" title="隐式字符编码转化"></a>隐式字符编码转化</h4><p>如果字符编码一致也会导致隐式字符编码转换，导致效率下降。</p>
-</div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>thetianxia</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://github.com/2022/04/27/Mysql45%E8%AE%B2%E6%80%BB%E7%BB%93/" title="Mysql45讲总结">https://github.com/2022/04/27/Mysql45%E8%AE%B2%E6%80%BB%E7%BB%93/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></section></article><div class="post-nav"><div class="post-nav-item"><a class="post-nav-prev" href="/blog/2022/05/17/SpringBoot%E9%85%8D%E7%BD%AE%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90/" rel="prev" title="SpringBoot配置多数据源"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-left-s-line"></use></svg><span class="post-nav-text">SpringBoot配置多数据源</span></a></div><div class="post-nav-item"><a class="post-nav-next" href="/blog/2022/01/19/%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91%E5%AD%A6%E4%B9%A0/" rel="next" title="完全二叉树"><span class="post-nav-text">完全二叉树</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>若您有任何想法，都可以与我交流。</span><br></div><style>.utterances {
-  max-width: 100%;
-}</style><script src="https://utteranc.es/client.js" repo="owner/repo" issue-term="pathname" theme="github-light" crossorigin="anonymous" async></script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2022 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> the tianxia</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v5.4.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.6.2</span></div><div class="live_time"><span>坚持就是胜利</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
-  setTimeout(blog_live_time, 1000);
-  const start = new Date('2021-10-27T00:00:00');
-  const now = new Date();
-  const timeDiff = (now.getTime() - start.getTime());
-  const msPerMinute = 60 * 1000;
-  const msPerHour = 60 * msPerMinute;
-  const msPerDay = 24 * msPerHour;
-  const passDay = Math.floor(timeDiff / msPerDay);
-  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
-  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
-  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
-  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+.post-body {
+  padding: 0 5rem;
+tablet()
+mobile()
 }
-blog_live_time();
-</script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div></body></html>
+.post-content {
+  padding: 20px 0px;
+}
+.post-meta {
+  font-size: 14px;
+  color: var(--hty-secondary-text-color);
+}
+.post-meta .icon {
+  margin-bottom: -1px;
+}
+.post-description {
+  font-weight: normal;
+  padding: 0.5rem;
+}
+.post-author {
+  display: flex;
+  justify-content: center;
+}
+.post-author .author-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 0;
+}
+.post-author .author-avatar img {
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  padding: 2px;
+  border: 2px solid #d3d3d3;
+}
+.post-author .author-name {
+  margin-left: 0.5rem;
+  font-size: 1rem;
+}
+.post-meta-item-icon {
+  display: inline-block;
+  color: var(--text-color, --hty-secondary-text-color);
+}
+.post-meta-divider {
+  height: 25px;
+  color: var(--hty-secondary-text-color);
+  margin: 0 0.5rem;
+}
+.post-eof {
+  margin: 50px auto;
+  width: 50%;
+  height: 1px;
+  background: $blue;
+  opacity: 0.1;
+}
+.post-copyright {
+  font-size: 0.9rem;
+  margin: 2rem 0;
+  padding: 0.5rem 1rem;
+  border-left: 4px solid #ff5252;
+  background-color: var(--hty-bg-color);
+  list-style: none;
+  word-break: break-all;
+  position: relative;
+  overflow: hidden;
+}
+.post-copyright::after {
+  position: absolute;
+  color: #fff;
+  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E%3Cpath fill='gray' d='M245.8 214.9l-33.2 17.3c-9.4-19.6-25.2-20-27.4-20-22.2 0-33.3 14.6-33.3 43.9 0 23.5 9.2 43.8 33.3 43.8 14.4 0 24.6-7 30.5-21.3l30.6 15.5a73.2 73.2 0 01-65.1 39c-22.6 0-74-10.3-74-77 0-58.7 43-77 72.6-77 30.8-.1 52.7 11.9 66 35.8zm143 0l-32.7 17.3c-9.5-19.8-25.7-20-27.9-20-22.1 0-33.2 14.6-33.2 43.9 0 23.5 9.2 43.8 33.2 43.8 14.5 0 24.7-7 30.5-21.3l31 15.5c-2 3.8-21.3 39-65 39-22.7 0-74-9.9-74-77 0-58.7 43-77 72.6-77C354 179 376 191 389 214.8zM247.7 8C104.7 8 0 123 0 256c0 138.4 113.6 248 247.6 248C377.5 504 496 403 496 256 496 118 389.4 8 247.6 8zm.8 450.8c-112.5 0-203.7-93-203.7-202.8 0-105.5 85.5-203.3 203.8-203.3A201.7 201.7 0 01451.3 256c0 121.7-99.7 202.9-202.9 202.9z'/%3E%3C/svg%3E");
+  content: ' ';
+  height: 10rem;
+  width: 10rem;
+  right: -2rem;
+  top: -2rem;
+  opacity: 0.1;
+}
+.tag-name {
+  padding: 0 0.1rem;
+}
