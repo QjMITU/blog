@@ -1,88 +1,185 @@
-.post-block {
-  color: var(--hty-text-color);
-  margin: 0 1rem;
-  padding: 1rem;
-  background-color: var(--post-block-bg-color);
-mobile()
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="the tianxia"><meta name="copyright" content="the tianxia"><meta name="generator" content="Hexo 5.4.0"><meta name="theme" content="hexo-theme-yun"><title>护网 | thetianxia-天下</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;display=swap" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/star-markdown-css@0.1.25/dist/yun/yun-markdown.min.css"><script src="//at.alicdn.com/t/font_1140697_dxory92pb0h.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>function initScrollReveal() {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
 }
-.post-body {
-  padding: 0 5rem;
-tablet()
-mobile()
+document.addEventListener("DOMContentLoaded", initScrollReveal);
+document.addEventListener("pjax:success", initScrollReveal);
+</script><link rel="icon" href="/blog/favicon.ico"><link rel="mask-icon" href="/blog/favicon.ico" color="#0078E7"><link rel="alternate icon" href="/blog/yun.ico"><link rel="preload" href="/blog/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/blog/js/utils.js" as="script"><link rel="preload" href="/blog/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/blog/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"hostname":"github.com","root":"/blog/","title":"天下的知识库","version":"1.6.2","mode":"auto","copycode":true,"page":{"isPost":true},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）"},"anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"../data/sentences.json"},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><link rel="stylesheet" href="/blog/css/hexo-theme-yun.css"><script src="/blog/js/utils.js"></script><script src="/blog/js/hexo-theme-yun.js"></script><meta name="description" content="护网1、应急响应 LINUX 熟悉服务器环境  uname -a     cat &#x2F;proc&#x2F;version 运行进程排查   ps pstree top 端口开放检查 netstat -antpl     lsof -i 检查主机服务    service –status-all 检查历史命令 history 查看计划任务  查看攻击者是否在用户目录下添加ssh    ll ~&#x2F;.ssh 扫描驱">
+<meta property="og:type" content="article">
+<meta property="og:title" content="护网">
+<meta property="og:url" content="https://github.com/2023/06/27/%E6%8A%A4%E7%BD%91/index.html">
+<meta property="og:site_name" content="thetianxia-天下">
+<meta property="og:description" content="护网1、应急响应 LINUX 熟悉服务器环境  uname -a     cat &#x2F;proc&#x2F;version 运行进程排查   ps pstree top 端口开放检查 netstat -antpl     lsof -i 检查主机服务    service –status-all 检查历史命令 history 查看计划任务  查看攻击者是否在用户目录下添加ssh    ll ~&#x2F;.ssh 扫描驱">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-27T09:03:42.861Z">
+<meta property="article:modified_time" content="2023-06-27T11:00:55.600Z">
+<meta property="article:author" content="the tianxia">
+<meta property="article:tag" content="HVV">
+<meta name="twitter:card" content="summary"><script src="/blog/js/ui/mode.js"></script></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest"></script><script defer src="/blog/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle hty-icon-button" id="menu-btn"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><div class="sidebar-toggle sidebar-overlay"></div><aside class="sidebar"><script src="/blog/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/blog/about/" title="the tianxia"><img width="96" loading="lazy" src="/blog/images/head_boji.jpg" alt="the tianxia"><span class="site-author-status" title="学习挣小钱钱">😤</span></a><div class="site-author-name"><a href="/blog/about/">the tianxia</a></div><span class="site-name">thetianxia-天下</span><sub class="site-subtitle">功不唐捐，玉汝于成</sub><div class="site-desciption">welcome to my blog,have a good time!</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/blog/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item"><a href="/blog/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">6</span></a></div><div class="site-state-item"><a href="/blog/categories/" title="分类"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-2-line"></use></svg></span><span class="site-state-item-count">9</span></a></div><div class="site-state-item"><a href="/blog/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">6</span></a></div><a class="site-state-item hty-icon-button" target="_blank" rel="noopener" href="https://www.yuque.com/xiaocongbandoufu-suh9q" title="我的语雀"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-yuque"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="1874712420@qq.com" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://wpa.qq.com/msgrd?v=3&amp;uin=1874712420&amp;site=qq&amp;menu=yes" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com" title="GitHub" target="_blank" style="color:#181717"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/blog/albums/" title="我的相册" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-gallery-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%A4%E7%BD%91"><span class="toc-number">1.</span> <span class="toc-text">护网</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%E3%80%81%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94-LINUX"><span class="toc-number">1.1.</span> <span class="toc-text">1、应急响应 LINUX</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%E3%80%81TOP10%E6%BC%8F%E6%B4%9E2021%E7%89%88%E6%9C%AC"><span class="toc-number">1.2.</span> <span class="toc-text">2、TOP10漏洞2021版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%E3%80%81%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.3.</span> <span class="toc-text">3、中间件漏洞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%E3%80%81webshell%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81"><span class="toc-number">1.4.</span> <span class="toc-text">4、webshell流量特征</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="hty-card post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="https://github.com/blog/2023/06/27/%E6%8A%A4%E7%BD%91/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="the tianxia"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="thetianxia-天下"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">护网</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2023-06-27 17:03:42" itemprop="dateCreated datePublished" datetime="2023-06-27T17:03:42+08:00">2023-06-27</time></div><div class="post-classify"><span class="post-category"> <span class="post-meta-item-icon" style="margin-right:3px;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-folder-line"></use></svg></span><span itemprop="about" itemscope itemtype="https://schema.org/Thing"><a class="category-item" href="/blog/categories/HVV/" style="--text-color:var(--hty-text-color)" itemprop="url" rel="index"><span itemprop="text">HVV</span></a></span></span><span class="post-tag"><span class="post-meta-divider">-</span><a class="tag-item" href="/blog/tags/HVV/" style="--text-color:var(--hty-text-color)"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">HVV</span></a></span></div><div class="post-author"><span class="author-name">thetianxia</span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content markdown-body" style="--smc-primary:#0078E7;"><h2 id="护网"><a href="#护网" class="headerlink" title="护网"></a>护网</h2><h3 id="1、应急响应-LINUX"><a href="#1、应急响应-LINUX" class="headerlink" title="1、应急响应 LINUX"></a>1、应急响应 LINUX</h3><ul>
+<li>熟悉服务器环境  uname -a     cat /proc/version</li>
+<li>运行进程排查   ps pstree top</li>
+<li>端口开放检查 netstat -antpl     lsof -i</li>
+<li>检查主机服务    service –status-all</li>
+<li>检查历史命令 history</li>
+<li>查看计划任务 </li>
+<li>查看攻击者是否在用户目录下添加ssh    ll ~/.ssh</li>
+<li>扫描驱动程序    lsmod</li>
+<li>日志检查 </li>
+<li>登录检查</li>
+<li>启动项检查</li>
+</ul>
+<h3 id="2、TOP10漏洞2021版本"><a href="#2、TOP10漏洞2021版本" class="headerlink" title="2、TOP10漏洞2021版本"></a>2、TOP10漏洞2021版本</h3><p>1、sql注入</p>
+<p>原理：攻击者通过输入插入恶意的sql代码，使其被误认为合法的sql，从而绕过验证恶意操作数据库。</p>
+<p>分类：</p>
+<p>盲注（布尔、时间）、报错注入、堆叠注入、宽字节注入、联合查询注入、二次注入</p>
+<p>解决方法：使用参数化查询和预编译语句，对用户输入进行验证，防止输入特殊字符。</p>
+<p>2、跨站脚本攻击</p>
+<p>原理：攻击者通过在网页中注入恶意脚本，使其在用户浏览器执行，从而窃取用户信息和执行代码。</p>
+<p>解决方法：对用户输入输出进行验证，避免拼接html</p>
+<p>3、无效的身份验证和会话管理</p>
+<p>原理：安全模块漏洞，导致认证绕过或者会话劫持，从而让攻击者访问受限资源。</p>
+<p>解决方法：使用安全的认证机制如JWT、OAUTH；使用随机复杂的会话标识</p>
+<p>4、安全配置错误</p>
+<p>原理：服务器、应用安全配置错误，导致潜在的漏洞</p>
+<p>解决方法：定期进行安全审计工作</p>
+<p>5、敏感信息泄露</p>
+<p>原理：为正确保护敏感信息，造成泄露</p>
+<p>解决方法：对敏感信息进行加密，采用安全的传输协议，定期审查系统敏感信息存储传输的逻辑</p>
+<p>6、XML外部实体注入</p>
+<p>原理：利用XML处理器解析时对外部实体的引用，从而读取本地文件或者进行远程请求</p>
+<p>解决方法：使用安全的XML解析器；进制或者限制外部实体引用。</p>
+<p>7、配置不当的云存储桶</p>
+<p>原理：错误配置导致未经授权的访问和信息泄露</p>
+<p>解决方法：使用正确的权限设置；定期审查存储桶的权限配置。</p>
+<p>8、远程代码执行</p>
+<p>原理：未正确验证和过滤用户输入，导致攻击者任意执行代码</p>
+<p>解决方法：对用户输入进行验证；使用最小权限原则，对外部应用进行认证授权。</p>
+<p>9、不安全的重定向和转发</p>
+<p>原理：重定向或转发时未验证目标url，导致恶意重定向和转发，引导用户访问恶意页面或者钓鱼网站。</p>
+<p>解决方法：避免将用户提供的输入用于重定向和转发。对重定向和转发目标进行验证和白名单筛选</p>
+<p>10、服务无端请求伪造SSRF</p>
+<p>原理：攻击者利用服务端漏洞发起伪造请求，访问内部资源、绕过防火墙或执行远程工具。</p>
+<p>解决方法：限制服务器出站连接；配置安全的网络访问策略；验证和过滤用户提供的URL和参数。</p>
+<h3 id="3、中间件漏洞"><a href="#3、中间件漏洞" class="headerlink" title="3、中间件漏洞"></a>3、中间件漏洞</h3><p>1、log4j 代码执行漏洞</p>
+<blockquote>
+<p>攻击者可以构造恶意日志，利用log4j中解析器漏洞，执行命令或者远程加载恶意代码。</p>
+<p>禁用JNID远程查找，配置安全策略限制log4j行为，设置IDS和IPS来阻止攻击。</p>
+</blockquote>
+<p>2、fastjson代码执行漏洞</p>
+<blockquote>
+<p>fastjson在反序列化时，能执行任意Java代码，黑客利用改点进行攻击。</p>
+<p>限制类加载、输入验证和过滤、关闭AutoType功能</p>
+</blockquote>
+<p>3、nginx漏洞</p>
+<blockquote>
+<p>代码执行和拒绝服务攻击</p>
+</blockquote>
+<p>4、LLS漏洞</p>
+<blockquote>
+<p>远程代码执行、目录遍历、拒绝服务、信息泄露、身份验证和授权绕过</p>
+</blockquote>
+<p>5、Apache漏洞</p>
+<blockquote>
+<p>远程代码执行、目录遍历、拒绝服务、缓冲区溢出、HTTP请求解析漏洞</p>
+</blockquote>
+<p>6、Tomcat漏洞</p>
+<blockquote>
+<p>远程代码执行、目录遍历、拒绝服务 、授权绕过</p>
+</blockquote>
+<p>7、weblogic漏洞</p>
+<blockquote>
+<p>远程代码执行、目录遍历、拒绝服务、信息泄露</p>
+</blockquote>
+<h3 id="4、webshell流量特征"><a href="#4、webshell流量特征" class="headerlink" title="4、webshell流量特征"></a>4、webshell流量特征</h3><p>攻击步骤：</p>
+<ul>
+<li><p>入侵网站</p>
+</li>
+<li><p>上传后门ASP、PHP、JSP等后门文件</p>
+</li>
+<li><p>访问后门文件</p>
+</li>
+<li><p>得到执行命令环境，控制服务器</p>
+</li>
+</ul>
+<p>攻击特点：</p>
+<ul>
+<li>持久化连接</li>
+<li>隐蔽性强</li>
+<li>提权</li>
+</ul>
+<p>webshell原理：</p>
+<p>webshell本质是一段带有恶意目的正常脚本</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ASP、PHP  eval(...)</span><br><span class="line">JSP  Runtime.exec(...)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数据传递</li>
+<li>代码执行</li>
+</ul>
+<p>分类：</p>
+<ul>
+<li>大马</li>
+</ul>
+<blockquote>
+<p>体积大、功能全、会调用系统函数，使用加密隐藏数据</p>
+</blockquote>
+<ul>
+<li>小马</li>
+</ul>
+<blockquote>
+<p>体积小、一般只有上传功能，用来上传大马。</p>
+</blockquote>
+<ul>
+<li>一句话木马</li>
+</ul>
+<blockquote>
+<p>代码短、使用场景多，可以插入文件，也可以作为单独文件，安全性高，可以执行和传递数据。</p>
+</blockquote>
+<ul>
+<li>打包马</li>
+</ul>
+<blockquote>
+<p>用于打包网站源码</p>
+</blockquote>
+<ul>
+<li>拖库马</li>
+</ul>
+<blockquote>
+<p>用于打包数据库数据</p>
+</blockquote>
+<ul>
+<li>内存马</li>
+</ul>
+<blockquote>
+<p>隐蔽性强、处理难度高，存在系统内存中，系统断电后消失。</p>
+</blockquote>
+<p>菜刀</p>
+<p>会存在eval、assert等代码执行函数，payload通过base64加密，防止被检测，同时会有z1等参数。</p>
+<p>冰蝎</p>
+<p>2.0使用对称加密，开始时会交换秘钥，响应头content-length:16，UA字段比较古老，Accept字段值固定</p>
+<p>3强特征是Content-Type: application/octet-stream</p>
+<p>蚁剑</p>
+<p>蚁剑会有明显的@ini_set(“display_errors”,”0”);  这段代码，同时绕过流量的参数名为_0x开头，对应的值是加密数据</p>
+<p>哥斯拉</p>
+<p>会含有pass=字段，同时服务器响应的长度为0</p>
+</div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>thetianxia</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="https://github.com/2023/06/27/%E6%8A%A4%E7%BD%91/" title="护网">https://github.com/2023/06/27/%E6%8A%A4%E7%BD%91/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></section></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/blog/2022/05/17/SpringBoot%E9%85%8D%E7%BD%AE%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90/" rel="next" title="SpringBoot配置多数据源"><span class="post-nav-text">SpringBoot配置多数据源</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div class="hty-card" id="comment"><div class="comment-tooltip text-center"><span>若您有任何想法，都可以与我交流。</span><br></div><style>.utterances {
+  max-width: 100%;
+}</style><script src="https://utteranc.es/client.js" repo="owner/repo" issue-term="pathname" theme="github-light" crossorigin="anonymous" async></script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2023 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> the tianxia</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v5.4.0</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v1.6.2</span></div><div class="live_time"><span>坚持就是胜利</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  setTimeout(blog_live_time, 1000);
+  const start = new Date('2021-10-27T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
 }
-.post-content {
-  padding: 20px 0px;
-}
-.post-meta {
-  font-size: 14px;
-  color: var(--hty-secondary-text-color);
-}
-.post-meta .icon {
-  margin-bottom: -1px;
-}
-.post-description {
-  font-weight: normal;
-  padding: 0.5rem;
-}
-.post-author {
-  display: flex;
-  justify-content: center;
-}
-.post-author .author-avatar {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  line-height: 0;
-}
-.post-author .author-avatar img {
-  border-radius: 50%;
-  height: 1rem;
-  width: 1rem;
-  padding: 2px;
-  border: 2px solid #d3d3d3;
-}
-.post-author .author-name {
-  margin-left: 0.5rem;
-  font-size: 1rem;
-}
-.post-meta-item-icon {
-  display: inline-block;
-  color: var(--text-color, --hty-secondary-text-color);
-}
-.post-meta-divider {
-  height: 25px;
-  color: var(--hty-secondary-text-color);
-  margin: 0 0.5rem;
-}
-.post-eof {
-  margin: 50px auto;
-  width: 50%;
-  height: 1px;
-  background: $blue;
-  opacity: 0.1;
-}
-.post-copyright {
-  font-size: 0.9rem;
-  margin: 2rem 0;
-  padding: 0.5rem 1rem;
-  border-left: 4px solid #ff5252;
-  background-color: var(--hty-bg-color);
-  list-style: none;
-  word-break: break-all;
-  position: relative;
-  overflow: hidden;
-}
-.post-copyright::after {
-  position: absolute;
-  color: #fff;
-  background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 496 512'%3E%3Cpath fill='gray' d='M245.8 214.9l-33.2 17.3c-9.4-19.6-25.2-20-27.4-20-22.2 0-33.3 14.6-33.3 43.9 0 23.5 9.2 43.8 33.3 43.8 14.4 0 24.6-7 30.5-21.3l30.6 15.5a73.2 73.2 0 01-65.1 39c-22.6 0-74-10.3-74-77 0-58.7 43-77 72.6-77 30.8-.1 52.7 11.9 66 35.8zm143 0l-32.7 17.3c-9.5-19.8-25.7-20-27.9-20-22.1 0-33.2 14.6-33.2 43.9 0 23.5 9.2 43.8 33.2 43.8 14.5 0 24.7-7 30.5-21.3l31 15.5c-2 3.8-21.3 39-65 39-22.7 0-74-9.9-74-77 0-58.7 43-77 72.6-77C354 179 376 191 389 214.8zM247.7 8C104.7 8 0 123 0 256c0 138.4 113.6 248 247.6 248C377.5 504 496 403 496 256 496 118 389.4 8 247.6 8zm.8 450.8c-112.5 0-203.7-93-203.7-202.8 0-105.5 85.5-203.3 203.8-203.3A201.7 201.7 0 01451.3 256c0 121.7-99.7 202.9-202.9 202.9z'/%3E%3C/svg%3E");
-  content: ' ';
-  height: 10rem;
-  width: 10rem;
-  right: -2rem;
-  top: -2rem;
-  opacity: 0.1;
-}
-.tag-name {
-  padding: 0 0.1rem;
-}
+blog_live_time();
+</script></div></footer><a class="hty-icon-button" id="back-to-top" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div></body></html>
