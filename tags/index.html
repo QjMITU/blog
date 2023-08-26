@@ -22,7 +22,7 @@ document.addEventListener("pjax:success", initScrollReveal);
   const wordcloud_canvas = document.getElementById('wordcloud-canvas')
   wordcloud_canvas.width = document.querySelector('#page').clientWidth - 16
   wordcloud_canvas.height = 350
-  let wordcloud_config = {"list":[["Mysql",1.1,"/blog/tags/Mysql/"],["SpringBoot",1.1,"/blog/tags/SpringBoot/"],["Spring Boot",1.1,"/blog/tags/Spring-Boot/"],["go",1.1,"/blog/tags/go/"],["位运算",1.1,"/blog/tags/位运算/"],["树",1.1,"/blog/tags/树/"],["HVV",1.1,"/blog/tags/HVV/"],["源码",1.1,"/blog/tags/源码/"]],"fontFamily":"'PingFang SC', 'Microsoft YaHei', Roboto, Arial, sans-serif","fontWeight":400,"gridSize":10,"weightFactor":13,"backgroundColor":"transparent","color":"random-dark"}
+  let wordcloud_config = {"list":[["Mysql",1.1,"/blog/tags/Mysql/"],["源码",1.1,"/blog/tags/源码/"],["SpringBoot",1.1,"/blog/tags/SpringBoot/"],["Spring Boot",1.1,"/blog/tags/Spring-Boot/"],["go",1.1,"/blog/tags/go/"],["位运算",1.1,"/blog/tags/位运算/"],["树",1.1,"/blog/tags/树/"],["哈希",1.1,"/blog/tags/哈希/"]],"fontFamily":"'PingFang SC', 'Microsoft YaHei', Roboto, Arial, sans-serif","fontWeight":400,"gridSize":10,"weightFactor":13,"backgroundColor":"transparent","color":"random-dark"}
   wordcloud_config.hover = function(item, dimension){
     if (!dimension) {
       wordbox.hidden = true
